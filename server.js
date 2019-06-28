@@ -55,7 +55,6 @@ function handleGetMovies(req, res){
   if(response.length === 0) {
    	 res.status(200).send('We didn\'t find your flicks!');
   }
-
 	res.json(response);	
 
 }
