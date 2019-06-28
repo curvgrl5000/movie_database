@@ -1,8 +1,8 @@
 require('dotenv').config(); // the .config method reads the .env file each time you start the server 
 const express = require('express');
 const morgan =  require('morgan');
-const helmet = require('helmet'); // hides info! https://github.com/helmetjs/helmet#how-it-works
 const cors = require('cors');
+const helmet = require('helmet'); // hides info! https://github.com/helmetjs/helmet#how-it-works
 const MOVIEDEX = require('./movies-data-small.json');
 
 const app = express();
@@ -13,10 +13,10 @@ app.use(cors());
 app.use(helmet());
 
 app.use(function validateBearerToken(req, res, next){
+ const authToken = req.get('Authorization') ? req.get('Authorization').split(' ')[1] : false;
  const apiToken = process.env.API_TOKEN;
- const authToken = req.get('Authorization');
 
-	if( !authToken || authToken.split(' ')[1] !== apiToken){
+	if( !authToken || authToken !== apiToken){
 		return res.status(401).json({ error: 'Sorry Unauthorized request'})
 	}
 	// if all works then move on to the next middleware
@@ -51,6 +51,11 @@ function handleGetMovies(req, res){
 			movie.avg_votes === Number( avg_vote)
     )
 	}
+
+  if(response.length === 0) {
+   	 res.status(200).send('We didn\'t find your flicks!');
+  }
+
 	res.json(response);	
 
 }
